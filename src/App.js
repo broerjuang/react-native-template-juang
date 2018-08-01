@@ -3,7 +3,9 @@
 import * as React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-class App extends React.Component {
+type Props = {};
+type State = {};
+class App extends React.Component<Props, State> {
   render() {
     return (
       <View style={styles.container}>

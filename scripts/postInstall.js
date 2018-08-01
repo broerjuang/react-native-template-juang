@@ -26,7 +26,7 @@ function replaceAppKey() {
 
   replace.sync({
     files: [path.resolve("index.android.js"), path.resolve("index.ios.js")],
-    from: "react-native-template-starter",
+    from: "react-native-template-juang",
     to: appName
   });
 }
@@ -34,6 +34,7 @@ function replaceAppKey() {
 function cleanup() {
   let devDependenciesJsonPath = path.resolve("devDependencies.json");
   fs.unlink(devDependenciesJsonPath);
+  execSync(`rm -rf ${devDependenciesJsonPath}`);
 }
 
 function postTemplateInit() {
