@@ -2,20 +2,6 @@ let execSync = require("child_process").execSync;
 let fs = require("fs");
 let path = require("path");
 
-function installDevDependencies() {
-  console.log("Adding dev dependencies for the project...");
-
-  let devDependenciesJsonPath = path.resolve("devDependencies.json");
-  let devDependencies = JSON.parse(fs.readFileSync(devDependenciesJsonPath));
-
-  for (let depName in devDependencies) {
-    let depVersion = devDependencies[depName];
-    let depToInstall = depName + "@" + depVersion;
-    console.log("Adding " + depToInstall + "...");
-    execSync(`yarn add ${depToInstall} -D`, { stdio: "inherit" });
-  }
-}
-
 function replaceAppKey() {
   execSync(`yarn add replace-in-file -D`, { stdio: "inherit" });
 
@@ -31,15 +17,33 @@ function replaceAppKey() {
   });
 }
 
+function addScripts() {
+  console.log("Adding scripts for the project...");
+
+  let packageJsonPath = path.resolve("package.json");
+  let packageJson = JSON.parse(fs.readFileSync(packageJsonPath));
+  let scriptsPath = path.resolve("scripts.json");
+  let scriptJson = JSON.parse(fs.readFileSync(scriptsPath));
+  let result = { scripts: { ...scriptJson }, ...packageJson };
+
+  fs.writeFile("package.json", JSON.stringify(result), (err, data) => {
+    if (err) {
+      console.log("error", err);
+    }
+    console.log("scripts have been added to package.json");
+  });
+}
+
 function cleanup() {
   let devDependenciesJsonPath = path.resolve("devDependencies.json");
+  let scriptsPath = path.resolve("devDependencies.json");
   fs.unlink(devDependenciesJsonPath);
-  execSync(`rm -rf ${devDependenciesJsonPath}`);
+  execSync(`rm -rf ${devDependenciesJsonPath} ${scriptsPath}`);
 }
 
 function postTemplateInit() {
-  installDevDependencies();
   replaceAppKey();
+  addScripts();
   cleanup();
 }
 
